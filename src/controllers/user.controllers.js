@@ -84,4 +84,10 @@ const loginUser= async(req,res)=>{
     }
 }
 
-export {registerUser,loginUser}
+const logOutUser= async(req,res)=>{
+    return res
+    .status(200)
+    .json({message:"user loggedOut successfully!!!"})
+}
+
+export {registerUser,loginUser,logOutUser}
