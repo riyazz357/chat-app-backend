@@ -4,7 +4,9 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { Server } from 'socket.io';
 import { Socket } from "dgram";
+import connectDB from "./db/index.js";
 import { Console } from "console";
+import { connect } from "http2";
 
 dotenv.config()
 
@@ -13,6 +15,17 @@ const httpServer=http.createServer(app);
 const io=new Server(httpServer)
 
 const PORT= process.env.PORT || 3500
+
+//connecting to the database
+connectDB()
+.then(()=>{
+    httpServer.listen(PORT,()=>{
+        console.log(`Server is running on port ${PORT}`);
+    })
+})
+.catch((err)=>{
+    console.log("MONGODB db connection failed !!!",err);
+})
 
 
 io.on("connction",(socket)=>{
@@ -23,6 +36,3 @@ io.on("connction",(socket)=>{
     })
 })
 
-httpServer.listen(PORT,()=>{
-    console.log(`server is running on port ${PORT}`)
-})
