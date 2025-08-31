@@ -6,6 +6,8 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import connectDB from './db/index.js';
 import userRouter from './routes/user.routes.js'; 
+import { Message } from './models/message.model.js';
+import { timeStamp } from 'console';
 
 dotenv.config();
 
@@ -34,6 +36,33 @@ connectDB()
 
 io.on('connection', (socket) => {
     console.log(' A user connected:', socket.id);
+
+
+    const userId=socket.handshake.query.userId;
+    if(userId){
+        socket.join(userId);
+        console.log(`User${userId} joined their room`);
+    }
+
+    socket.on('private message',async({content,to})=>{
+        try{
+            const message=await Message.create({
+                content,
+                sender:userId,
+                receiver:to
+            });
+            io.to(to).emit('private message',{
+                content,
+                from:userId,
+                timeStamp:message.createdAt
+            });
+            console.log(`message from ${userId} to ${to}:${content}`);
+
+        }catch(error){
+            console.log("Error handling private message:",error)
+        }
+    })
+
 
     socket.on('disconnect', () => {
         console.log(' A user disconnected:', socket.id);
