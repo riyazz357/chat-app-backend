@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import connectDB from './db/index.js';
 import userRouter from './routes/user.routes.js'; 
 import { Message } from './models/message.model.js';
+import messsageRouter from './routes/message.route.js';
 import { timeStamp } from 'console';
 
 dotenv.config();
@@ -18,6 +19,7 @@ const io = new Server(httpServer);
 
 app.use(express.json());
 app.use("/api/v1/users", userRouter); 
+app.use("/api/v1/messages",messsageRouter);
 
 
 
